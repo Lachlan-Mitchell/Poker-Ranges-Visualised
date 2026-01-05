@@ -132,6 +132,17 @@ h1 {
 
 /* Mobile buttons spacing */
 @media (max-width: 600px) {
+  #grid {
+    grid-template-columns: repeat(13, 32px);
+    gap: 2px;
+    margin-top: 12px;
+  }
+
+  .cell {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
   #controls {
     display: flex;
     flex-wrap: wrap;

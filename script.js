@@ -239,6 +239,27 @@ document.addEventListener("mouseup", () => {
   lastIndex = null;
 });
 
+// === Touch start ===
+cell.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  handleStart(cell, touch);
+});
+
+// === Touch move ===
+cell.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const target = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (target && target.classList.contains("cell")) handleEnter(target);
+});
+
+// === Touch end ===
+cell.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  handleEnd();
+});
+
 // --- Buttons ---
 const btnAdd = document.getElementById("btnAdd");
 const btnRemove = document.getElementById("btnRemove");
