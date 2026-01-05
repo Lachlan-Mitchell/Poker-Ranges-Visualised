@@ -1,4 +1,4 @@
-const ranks = ["A","K","Q","J","T","9","8","7","6","5","4","3","2"];
+const ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
 const grid = document.getElementById("grid");
 const comboCountEl = document.getElementById("comboCount");
 const rangeBar = document.getElementById("rangeBar");
@@ -12,6 +12,7 @@ let isDragging = false;
 let dragMode = null;
 let shiftStartCell = null;
 let activeMode = null;
+let lastTouchedCell = null;
 
 const tempHighlight = new Set();
 const lockedCells = new Set();
@@ -30,11 +31,13 @@ function comboCount(hand) {
 
 function updateCount() {
   let total = 0;
-  range.forEach(h => total += comboCount(h));
+  range.forEach((h) => (total += comboCount(h)));
   comboCountEl.textContent = total;
   const percent = Math.min(100, (total / TOTAL_COMBOS) * 100);
   rangeBar.style.width = `${percent}%`;
-  rangePercentEl.textContent = `${percent.toFixed(1)}% (${total} / ${TOTAL_COMBOS})`;
+  rangePercentEl.textContent = `${percent.toFixed(
+    1
+  )}% (${total} / ${TOTAL_COMBOS})`;
 }
 
 function applyCell(cell, mode) {
@@ -53,7 +56,9 @@ function applyCell(cell, mode) {
 }
 
 function clearTempHighlight() {
-  tempHighlight.forEach(c => c.classList.remove("temp-highlight","temp-erase"));
+  tempHighlight.forEach((c) =>
+    c.classList.remove("temp-highlight", "temp-erase")
+  );
   tempHighlight.clear();
 }
 
@@ -77,11 +82,13 @@ function shiftHighlight(cell) {
   const hand = cell.dataset.hand;
   const type = hand.endsWith("o") ? "col" : hand.endsWith("s") ? "row" : "pair";
 
-  if (!lastIndex || lastIndex.type !== type ||
-      (type === "col" && lastIndex.col !== col) ||
-      (type === "row" && lastIndex.row !== row)) {
-
-    lockedCells.forEach(c => applyCell(c,"add"));
+  if (
+    !lastIndex ||
+    lastIndex.type !== type ||
+    (type === "col" && lastIndex.col !== col) ||
+    (type === "row" && lastIndex.row !== row)
+  ) {
+    lockedCells.forEach((c) => applyCell(c, "add"));
     lockedCells.clear();
     lastIndex = { row, col, type };
   }
@@ -118,8 +125,8 @@ function rectEraseHighlight(start, end) {
   const a = findCellIndex(start);
   const b = findCellIndex(end);
 
-  for (let r = Math.min(a.row,b.row); r <= Math.max(a.row,b.row); r++) {
-    for (let c = Math.min(a.col,b.col); c <= Math.max(a.col,b.col); c++) {
+  for (let r = Math.min(a.row, b.row); r <= Math.max(a.row, b.row); r++) {
+    for (let c = Math.min(a.col, b.col); c <= Math.max(a.col, b.col); c++) {
       const cell = gridCells[r][c];
       if (cell.classList.contains("active")) {
         tempHighlight.add(cell);
@@ -135,11 +142,11 @@ function rectEraseHighlight(start, end) {
 
 function commit() {
   if (dragMode === "shiftFill") {
-    tempHighlight.forEach(c => applyCell(c,"add"));
-    lockedCells.forEach(c => applyCell(c,"add"));
-  } 
+    tempHighlight.forEach((c) => applyCell(c, "add"));
+    lockedCells.forEach((c) => applyCell(c, "add"));
+  }
   if (dragMode === "rectErase") {
-    tempHighlight.forEach(c => applyCell(c,"remove"));
+    tempHighlight.forEach((c) => applyCell(c, "remove"));
   }
   updateCount();
   clearTempHighlight();
@@ -155,14 +162,26 @@ function startDrag(cell, button, shift) {
   isDragging = true;
   shiftStartCell = cell;
 
-  if (shift && button === 0) dragMode = "shiftFill";
-  else if (shift && button === 2) dragMode = "rectErase";
-  else if (button === 2) dragMode = "remove";
-  else if (activeMode) dragMode = activeMode;
-  else dragMode = "add";
+  // BUTTON MODE TAKES PRIORITY (desktop & mobile)
+  if (activeMode) {
+    dragMode = activeMode;
+  }
 
-  if (dragMode === "add" || dragMode === "remove")
+  // NO BUTTON SELECTED → DESKTOP SHORTCUTS
+  else if (shift && button === 0) {
+    dragMode = "shiftFill";
+  } else if (shift && button === 2) {
+    dragMode = "rectErase";
+  } else if (button === 2) {
+    dragMode = "remove";
+  } else {
+    dragMode = "add";
+  }
+
+  // Apply initial cell
+  if (dragMode === "add" || dragMode === "remove") {
     applyCell(cell, dragMode);
+  }
   if (dragMode === "shiftFill") shiftHighlight(cell);
   if (dragMode === "rectErase") rectEraseHighlight(cell, cell);
 }
@@ -171,7 +190,8 @@ function moveDrag(cell, shift) {
   if (!isDragging) return;
   if (dragMode === "add" || dragMode === "remove") applyCell(cell, dragMode);
   if (shift && dragMode === "shiftFill") shiftHighlight(cell);
-  if (shift && dragMode === "rectErase") rectEraseHighlight(shiftStartCell, cell);
+  if (shift && dragMode === "rectErase")
+    rectEraseHighlight(shiftStartCell, cell);
 }
 
 function endDrag() {
@@ -186,26 +206,33 @@ function endDrag() {
    Build Grid
 ======================= */
 
-ranks.forEach((r1,i)=>{
-  const row=[];
-  ranks.forEach((r2,j)=>{
-    let hand,type;
-    if(i===j){hand=r1+r2;type="pair";}
-    else if(i<j){hand=r1+r2+"s";type="suited";}
-    else{hand=r2+r1+"o";type="offsuit";}
+ranks.forEach((r1, i) => {
+  const row = [];
+  ranks.forEach((r2, j) => {
+    let hand, type;
+    if (i === j) {
+      hand = r1 + r2;
+      type = "pair";
+    } else if (i < j) {
+      hand = r1 + r2 + "s";
+      type = "suited";
+    } else {
+      hand = r2 + r1 + "o";
+      type = "offsuit";
+    }
 
-    const cell=document.createElement("div");
-    cell.className=`cell ${type}`;
-    cell.textContent=hand;
-    cell.dataset.hand=hand;
+    const cell = document.createElement("div");
+    cell.className = `cell ${type}`;
+    cell.textContent = hand;
+    cell.dataset.hand = hand;
 
-    cell.addEventListener("mousedown",e=>{
+    cell.addEventListener("mousedown", (e) => {
       e.preventDefault();
-      startDrag(cell,e.button,e.shiftKey);
+      startDrag(cell, e.button, e.shiftKey);
     });
 
-    cell.addEventListener("mouseenter",e=>{
-      if(isDragging) moveDrag(cell,e.shiftKey);
+    cell.addEventListener("mouseenter", (e) => {
+      if (isDragging) moveDrag(cell, e.shiftKey);
     });
 
     row.push(cell);
@@ -214,42 +241,113 @@ ranks.forEach((r1,i)=>{
   gridCells.push(row);
 });
 
-grid.addEventListener("contextmenu", e => {
+grid.addEventListener("contextmenu", (e) => {
   if (isDragging) {
     e.preventDefault(); // block menu only during drag
   }
 });
 
 /* =======================
-   TOUCH SUPPORT (KEY PART)
+   BUTTON CONTROLS
 ======================= */
 
-document.addEventListener("touchstart",e=>{
-  const t=e.touches[0];
-  const el=document.elementFromPoint(t.clientX,t.clientY);
-  if(el && el.classList.contains("cell")){
+const controlButtons = document.querySelectorAll("#controls button");
+
+controlButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const mode = btn.dataset.mode;
+
+    // Toggle off if same button clicked
+    if (activeMode === mode) {
+      activeMode = null;
+      btn.classList.remove("active");
+    } else {
+      activeMode = mode;
+      controlButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+  });
+});
+
+controlButtons.forEach((btn) => {
+  btn.addEventListener("touchstart", () => {
+    const mode = btn.dataset.mode;
+
+    // Toggle off if same button clicked
+    if (activeMode === mode) {
+      activeMode = null;
+      btn.classList.remove("active");
+    } else {
+      activeMode = mode;
+      controlButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+  });
+});
+
+/* =======================
+   TOUCH SUPPORT Driven the same as mouse
+======================= */
+
+grid.addEventListener(
+  "touchstart",
+  (e) => {
+    if (e.touches.length !== 1) return;
+
+    const t = e.touches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const cell = el?.closest(".cell");
+    if (!cell) return;
+
     e.preventDefault();
-    startDrag(el,0,false);
-  }
-},{passive:false});
 
-document.addEventListener("touchmove",e=>{
-  const t=e.touches[0];
-  const el=document.elementFromPoint(t.clientX,t.clientY);
-  if(el && el.classList.contains("cell")){
+    // Touch behaves like LEFT CLICK
+    startDrag(cell, 0, false);
+    lastTouchedCell = cell;
+  },
+  { passive: false }
+);
+
+grid.addEventListener(
+  "touchmove",
+  (e) => {
+    if (!isDragging) return;
+
+    const t = e.touches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const cell = el?.closest(".cell");
+
+    if (!cell || cell === lastTouchedCell) return;
+
     e.preventDefault();
-    moveDrag(el,false);
-  }
-},{passive:false});
+    moveDrag(cell, false);
+    lastTouchedCell = cell;
+  },
+  { passive: false }
+);
 
-document.addEventListener("touchend",e=>{
-  e.preventDefault();
-  endDrag();
-},{passive:false});
+grid.addEventListener(
+  "touchend",
+  (e) => {
+    e.preventDefault();
+    endDrag();
+    lastTouchedCell = null;
+  },
+  { passive: false }
+);
 
-document.addEventListener("mouseup",endDrag);
+document.addEventListener(
+  "touchend",
+  (e) => {
+    e.preventDefault();
+    endDrag();
+  },
+  { passive: false }
+);
 
-document.addEventListener("contextmenu", e => {
+document.addEventListener("mouseup", endDrag);
+
+document.addEventListener("contextmenu", (e) => {
   const rect = grid.getBoundingClientRect();
   const insideBufferedGrid =
     e.clientX >= rect.left - GRID_BUFFER_PX &&

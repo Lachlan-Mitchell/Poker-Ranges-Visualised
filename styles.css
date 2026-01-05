@@ -131,26 +131,53 @@ h1 {
 }
 
 /* Mobile buttons spacing */
+
 @media (max-width: 600px) {
+  body {
+    margin: 0;
+    padding: 0;
+    background: #121212;
+  }
+
+  h1 {
+    font-size: 16px;
+    margin: 6px 0;
+  }
+
+  #controls {
+    margin: 4px 0;
+    gap: 4px;
+  }
+
+  /* GRID tweaks */
   #grid {
-    grid-template-columns: repeat(13, 32px);
-    gap: 2px;
-    margin-top: 12px;
-    touch-action: none;
+    width: calc(100vw - 32px); /* extra horizontal padding */
+    max-width: calc(100vw - 32px);
+    margin: 0 auto;
+    padding: 8px; /* padding inside the grid */
+    gap: 2px; /* space between cells */
+    grid-template-columns: repeat(13, 1fr);
   }
 
   .cell {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
+    width: auto;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    font-size: clamp(10px, 2.5vw, 14px);
+    border-radius: 4px;
   }
-  #controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+
+  /* RANGE BAR tweaks */
+  #rangeBarContainer {
+    height: 28px; /* slightly shorter */
+    padding: 0 12px; /* horizontal padding */
+    margin-bottom: 4px; /* reduce bottom gap */
   }
-  #controls button {
-    margin: 4px;
-    flex: 1 1 40%;
-  }
+}
+
+/* Disable browser gestures on grid */
+#grid {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }

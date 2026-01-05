@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Poker Range Tracker</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <h1>Poker Range Tracker</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>Poker Range Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Poker Range Tracker</h1>
 
-  <div id="controls">
-    <button id="btnAdd">Add Selection</button>
-    <button id="btnRemove">Remove Selection</button>
-    <button id="btnShiftFill">Shift Column/Row Fill</button>
-    <button id="btnRectErase">Rectangle Erase</button>
-  </div>
+    <div id="controls">
+      <button data-mode="add" id="btnAdd">Add Selection</button>
+      <button data-mode="remove" id="btnRemove">Remove Selection</button>
+      <button data-mode="shiftFill" id="btnShiftFill">
+        Shift Column/Row Fill
+      </button>
+      <button data-mode="rectErase" id="btnRectErase">Rectangle Erase</button>
+    </div>
 
-  <div id="stats">Selected combos: <span id="comboCount">0</span></div>
+    <div id="stats">Selected combos: <span id="comboCount">0</span></div>
 
-  <div id="grid"></div>
-  <div id="rangeBarContainer">
-    <div id="rangeBar"></div>
-    <span id="rangePercent">0% (0 / 1326)</span>
-  </div>
+    <div id="grid"></div>
+    <div id="rangeBarContainer">
+      <div id="rangeBar"></div>
+      <span id="rangePercent">0% (0 / 1326)</span>
+    </div>
 
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
