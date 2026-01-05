@@ -1,2 +1,2 @@
 # Poker Ranges Visualised
-This is a visulaisation tool for poker ranges
+This is a visualisation tool for poker ranges
