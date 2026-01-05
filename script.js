@@ -189,8 +189,8 @@ function startDrag(cell, button, shift) {
 function moveDrag(cell, shift) {
   if (!isDragging) return;
   if (dragMode === "add" || dragMode === "remove") applyCell(cell, dragMode);
-  if (shift && dragMode === "shiftFill") shiftHighlight(cell);
-  if (shift && dragMode === "rectErase")
+  if (dragMode === "shiftFill") shiftHighlight(cell);
+  if (dragMode === "rectErase")
     rectEraseHighlight(shiftStartCell, cell);
 }
 
