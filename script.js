@@ -270,7 +270,7 @@ controlButtons.forEach((btn) => {
 });
 
 controlButtons.forEach((btn) => {
-  btn.addEventListener("touchstart", () => {
+  btn.addEventListener("touchend", () => {
     const mode = btn.dataset.mode;
 
     // Toggle off if same button clicked
@@ -283,6 +283,7 @@ controlButtons.forEach((btn) => {
       btn.classList.add("active");
     }
   });
+  
 });
 
 /* =======================

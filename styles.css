@@ -151,11 +151,11 @@ h1 {
 
   /* GRID tweaks */
   #grid {
-    width: calc(100vw - 32px); /* extra horizontal padding */
-    max-width: calc(100vw - 32px);
+    width: 90vw; /* extra horizontal padding */
+    max-width: 90vw;
     margin: 0 auto;
     padding: 8px; /* padding inside the grid */
-    gap: 2px; /* space between cells */
+    gap: 4px; /* space between cells */
     grid-template-columns: repeat(13, 1fr);
   }
 
