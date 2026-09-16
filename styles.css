@@ -597,3 +597,73 @@ aside {
 .card-option-black {
   color: #f3f5f7;
 }
+
+
+/* Mobile buttons spacing */
+
+@media (max-width: 600px) {
+  body {
+    margin: 0;
+    padding: 0;
+    background: #121212;
+  }
+
+  h1 {
+    font-size: 16px;
+    margin: 6px 0;
+  }
+
+  #controls {
+    margin: 4px 0;
+    gap: 4px;
+  }
+
+  /* GRID tweaks */
+  #grid {
+    width: 90vw; /* extra horizontal padding */
+    max-width: 90vw;
+    margin: 0 auto;
+    padding: 4px; /* padding inside the grid */
+    gap: 2px; /* space between cells */
+    grid-template-columns: repeat(13, 1fr);
+  }
+
+  .cell {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    font-size: clamp(10px, 2.5vw, 14px);
+    border-radius: 4px;
+  }
+
+  #rangeBarContainer {
+    height: 28px; 
+    padding: 0 12px; 
+    margin-bottom: 4px; 
+  }
+
+  .cell.active {
+    outline:2px solid #ffeb3b;
+    z-index: 1;
+  }
+  
+  /* Temporary highlights */
+  .cell.temp-highlight {
+    outline: 2px dashed yellow;
+    background-color: rgba(255, 255, 0, 0.15);
+    z-index: 2;
+  }
+  
+  .cell.temp-erase {
+    outline: 2px dashed red;
+    background-color: rgba(255, 0, 0, 0.15);
+    z-index: 2;
+  }
+}
+
+/* Disable browser gestures on grid */
+#grid {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
