@@ -1,32 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"
     />
     <title>Poker Range Tracker</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Poker Range Tracker</h1>
+    <header class="app-header">
+      <div>
+        <h1>Poker Range Tracker</h1>
+      </div>
+      <span id="storageStatus">Saved locally</span>
+    </header>
 
-    <div id="controls">
-      <button data-mode="add" id="btnAdd">Add Selection</button>
-      <button data-mode="remove" id="btnRemove">Remove Selection</button>
-      <button data-mode="shiftFill" id="btnShiftFill">Column/Row Fill</button>
-      <button data-mode="rectErase" id="btnRectErase">Rectangle Erase</button>
-    </div>
+    <main class="app-shell">
+      <section class="tracker-panel">
+        <div class="selection-card">
+          <div class="toolbar-grid">
+            <label
+              >Game Type
+              <select id="gameTypeSelect"></select>
+            </label>
+            <label
+              >Player
+              <select id="playerSelect"></select>
+            </label>
+            <label
+              >Situation
+              <select id="situationSelect">
+                <option value="UTG">UTG</option>
+                <option value="HJ">HJ</option>
+                <option value="CO">CO</option>
+                <option value="BTN">BTN</option>
+                <option value="SB">SB</option>
+                <option value="BB">BB</option>
+                <option value="BB vs BTN">BB vs BTN</option>
+                <option value="BTN vs BB">BTN vs BB</option>
+                <option value="3-Bet">3-Bet</option>
+                <option value="4-Bet">4-Bet</option>
+                <option value="Custom">Custom</option>
+              </select>
+            </label>
+            <label id="customSituationWrap" hidden
+              >Custom situation
+              <input
+                id="customSituation"
+                maxlength="60"
+                placeholder="e.g. River bluff catch"
+              />
+            </label>
+          </div>
 
-    <div id="stats">Selected combos: <span id="comboCount">0</span></div>
+          <div class="range-row">
+            <label class="range-select-label"
+              >Range / Template
+              <select id="rangeSelect"></select>
+            </label>
+            <button id="btnLoadRange">Load Range</button>
+            <button id="btnAssign">Assign to Player</button>
+          </div>
 
-    <div id="grid"></div>
-    <div id="rangeBarContainer">
-      <div id="rangeBar"></div>
-      <span id="rangePercent">0% (0 / 1326)</span>
-    </div>
+          <div class="template-actions">
+            <button id="btnSaveTemplate">Save Current as Template</button>
+            <button id="btnUpdateTemplate">Update My Template</button>
+            <button id="btnDeleteTemplate" class="danger">
+              Delete My Template
+            </button>
+          </div>
 
+          <div id="assignmentStatus" class="assignment-status">
+            Select a player and situation to assign an expected range.
+          </div>
+        </div>
+
+        <div id="controls">
+          <button data-mode="add">Add Selection</button>
+          <button data-mode="remove">Remove Selection</button>
+          <button data-mode="shiftFill">Column/Row Fill</button>
+          <button data-mode="rectErase">Rectangle Erase</button>
+        </div>
+
+        <div id="stats">
+          <span>Selected combos: <strong id="comboCount">0</strong></span>
+          <span>Range: <strong id="rangePercentText">0.0%</strong></span>
+        </div>
+
+        <div id="grid" aria-label="13 by 13 poker range grid"></div>
+
+        <div class="range-bar">
+          <div id="rangeBar"></div>
+          <span id="rangePercent">0% (0 / 1326)</span>
+        </div>
+      </section>
+
+      <aside>
+        <section class="card">
+          <h2>Players</h2>
+          <div class="inline">
+            <input
+              id="newPlayerName"
+              placeholder="Player name"
+              maxlength="60"
+            />
+            <button id="btnAddPlayer">Add</button>
+          </div>
+          <div id="playerList" class="list"></div>
+          <button id="btnDeletePlayer" class="danger full">
+            Delete Selected Player
+          </button>
+        </section>
+
+        <section class="card">
+          <h2>Ranges</h2>
+          <p id="rangeListSummary">45 premade ranges included.</p>
+          <div id="templateList" class="list template-list"></div>
+        </section>
+
+        <section class="card help">
+          <h2>Workflow</h2>
+          <ol>
+            <li>
+              Choose a <strong>Game Type</strong> to filter the premade ranges.
+            </li>
+            <li>Choose a range and load it into the grid.</li>
+            <li>
+              Choose a player and situation, then assign the range as their
+              expected range.
+            </li>
+            <li>Edit the loaded grid without changing the premade range.</li>
+            <li>
+              Save your edited grid as your own template if you want a reusable
+              custom range.
+            </li>
+          </ol>
+          <p class="note">
+            Premade ranges are built into this page and are available to
+            everyone. User-created templates are stored only in that browser.
+          </p>
+        </section>
+      </aside>
+    </main>
+
+    <div id="toast" class="toast"></div>
     <script src="script.js"></script>
   </body>
 </html>
