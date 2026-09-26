@@ -598,7 +598,6 @@ aside {
   color: #f3f5f7;
 }
 
-
 /* Mobile buttons spacing */
 
 @media (max-width: 600px) {
@@ -637,23 +636,23 @@ aside {
   }
 
   #rangeBarContainer {
-    height: 28px; 
-    padding: 0 12px; 
-    margin-bottom: 4px; 
+    height: 28px;
+    padding: 0 12px;
+    margin-bottom: 4px;
   }
 
   .cell.active {
-    outline:2px solid #ffeb3b;
+    outline: 2px solid #ffeb3b;
     z-index: 1;
   }
-  
+
   /* Temporary highlights */
   .cell.temp-highlight {
     outline: 2px dashed yellow;
     background-color: rgba(255, 255, 0, 0.15);
     z-index: 2;
   }
-  
+
   .cell.temp-erase {
     outline: 2px dashed red;
     background-color: rgba(255, 0, 0, 0.15);

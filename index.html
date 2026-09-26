@@ -4,147 +4,355 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
-    <title>Poker Range Tracker</title>
+    <title>Poker Range Tracker & 6-Max Trainer</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="app-header">
       <div>
         <h1>Poker Range Tracker</h1>
+        <p>Range Builder • 6-Max Cash Preflop Trainer • Hand Review</p>
       </div>
+      <nav class="tabs">
+        <button class="tab-button active" data-tab="rangeTab">
+          Range Builder
+        </button>
+        <button class="tab-button" data-tab="quizTab">Quiz Trainer</button>
+        <button class="tab-button" data-tab="trainerTab">Hand Trainer</button>
+        <button class="tab-button" data-tab="reviewTab">Hand Review</button>
+      </nav>
       <span id="storageStatus">Saved locally</span>
     </header>
 
-    <main class="app-shell">
-      <section class="tracker-panel">
-        <div class="selection-card">
-          <div class="toolbar-grid">
-            <label
-              >Game Type
-              <select id="gameTypeSelect"></select>
-            </label>
-            <label
-              >Player
-              <select id="playerSelect"></select>
-            </label>
-            <label
-              >Situation
-              <select id="situationSelect">
-                <option value="UTG">UTG</option>
-                <option value="HJ">HJ</option>
-                <option value="CO">CO</option>
-                <option value="BTN">BTN</option>
-                <option value="SB">SB</option>
-                <option value="BB">BB</option>
-                <option value="BB vs BTN">BB vs BTN</option>
-                <option value="BTN vs BB">BTN vs BB</option>
-                <option value="3-Bet">3-Bet</option>
-                <option value="4-Bet">4-Bet</option>
-                <option value="Custom">Custom</option>
-              </select>
-            </label>
-            <label id="customSituationWrap" hidden
-              >Custom situation
-              <input
-                id="customSituation"
-                maxlength="60"
-                placeholder="e.g. River bluff catch"
-              />
-            </label>
+    <main id="rangeTab" class="tab-content active">
+      <div class="app-shell">
+        <section class="tracker-panel card">
+          <div class="selection-card">
+            <div class="toolbar-grid">
+              <label>Game Type<select id="gameTypeSelect"></select></label>
+              <label>Player<select id="playerSelect"></select></label>
+              <label
+                >Situation<select id="situationSelect">
+                  <option>UTG</option>
+                  <option>HJ</option>
+                  <option>CO</option>
+                  <option>BTN</option>
+                  <option>SB</option>
+                  <option>BB</option>
+                  <option>BB vs BTN</option>
+                  <option>BTN vs BB</option>
+                  <option>3-Bet</option>
+                  <option>4-Bet</option>
+                  <option>Custom</option>
+                </select></label
+              >
+              <label id="customSituationWrap" hidden
+                >Custom situation<input id="customSituation" maxlength="60"
+              /></label>
+            </div>
+            <div class="range-row">
+              <label class="range-select-label"
+                >Range / Template<select id="rangeSelect"></select
+              ></label>
+              <button id="btnLoadRange">Load Range</button
+              ><button id="btnAssign">Assign to Player</button>
+            </div>
+            <div class="template-actions">
+              <button id="btnSaveTemplate">Save Current as Template</button>
+              <button id="btnUpdateTemplate">Update My Template</button>
+              <button id="btnDeleteTemplate" class="danger">
+                Delete My Template
+              </button>
+            </div>
+            <div id="assignmentStatus" class="assignment-status">
+              Select a player and situation to assign an expected range.
+            </div>
           </div>
-
-          <div class="range-row">
-            <label class="range-select-label"
-              >Range / Template
-              <select id="rangeSelect"></select>
-            </label>
-            <button id="btnLoadRange">Load Range</button>
-            <button id="btnAssign">Assign to Player</button>
+          <div id="controls">
+            <button data-mode="add">Add Selection</button
+            ><button data-mode="remove">Remove Selection</button>
+            <button data-mode="shiftFill">Column/Row Fill</button
+            ><button data-mode="rectErase">Rectangle Erase</button>
           </div>
-
-          <div class="template-actions">
-            <button id="btnSaveTemplate">Save Current as Template</button>
-            <button id="btnUpdateTemplate">Update My Template</button>
-            <button id="btnDeleteTemplate" class="danger">
-              Delete My Template
-            </button>
+          <div id="stats">
+            <span>Selected combos: <strong id="comboCount">0</strong></span
+            ><span>Range: <strong id="rangePercentText">0.0%</strong></span>
           </div>
-
-          <div id="assignmentStatus" class="assignment-status">
-            Select a player and situation to assign an expected range.
+          <div id="grid" aria-label="13 by 13 poker range grid"></div>
+          <div class="range-bar">
+            <div id="rangeBar"></div>
+            <span id="rangePercent">0% (0 / 1326)</span>
           </div>
-        </div>
-
-        <div id="controls">
-          <button data-mode="add">Add Selection</button>
-          <button data-mode="remove">Remove Selection</button>
-          <button data-mode="shiftFill">Column/Row Fill</button>
-          <button data-mode="rectErase">Rectangle Erase</button>
-        </div>
-
-        <div id="stats">
-          <span>Selected combos: <strong id="comboCount">0</strong></span>
-          <span>Range: <strong id="rangePercentText">0.0%</strong></span>
-        </div>
-
-        <div id="grid" aria-label="13 by 13 poker range grid"></div>
-
-        <div class="range-bar">
-          <div id="rangeBar"></div>
-          <span id="rangePercent">0% (0 / 1326)</span>
-        </div>
-      </section>
-
-      <aside>
-        <section class="card">
-          <h2>Players</h2>
-          <div class="inline">
-            <input
-              id="newPlayerName"
-              placeholder="Player name"
-              maxlength="60"
-            />
-            <button id="btnAddPlayer">Add</button>
-          </div>
-          <div id="playerList" class="list"></div>
-          <button id="btnDeletePlayer" class="danger full">
-            Delete Selected Player
-          </button>
-        </section>
-
-        <section class="card">
-          <h2>Ranges</h2>
-          <p id="rangeListSummary">45 premade ranges included.</p>
-          <div id="templateList" class="list template-list"></div>
-        </section>
-
-        <section class="card">
-          <h2>Workflow</h2>
-          <ol>
-            <li>
-              Choose a <strong>Game Type</strong> to filter the premade ranges.
-            </li>
-            <li>Choose a range and load it into the grid.</li>
-            <li>
-              Choose a player and situation, then assign the range as their
-              expected range.
-            </li>
-            <li>Edit the loaded grid without changing the premade range.</li>
-            <li>
-              Save your edited grid as your own template if you want a reusable
-              custom range.
-            </li>
-          </ol>
-          <p class="note">
-            Premade ranges are built into this page and are available to
-            everyone. User-created templates are stored only in that browser.
+          <p class="hint">
+            Left click/drag adds • Right click/drag removes • Shift+Left fills •
+            Shift+Right rectangle erases.
           </p>
         </section>
-      </aside>
+        <aside>
+          <section class="card">
+            <h2>Players</h2>
+            <div class="inline">
+              <input id="newPlayerName" placeholder="Player name" /><button
+                id="btnAddPlayer"
+              >
+                Add
+              </button>
+            </div>
+            <div id="playerList" class="list"></div>
+            <button id="btnDeletePlayer" class="danger full">
+              Delete Selected Player
+            </button>
+          </section>
+          <section class="card">
+            <h2>Ranges</h2>
+            <p id="rangeListSummary">No premade ranges loaded.</p>
+            <div id="templateList" class="list template-list"></div>
+          </section>
+          <section class="card">
+            <h2>Workflow</h2>
+            <ol class="help-list">
+              <li>Choose a game type and range.</li>
+              <li>Load it into the grid.</li>
+              <li>Select a player and situation to assign it.</li>
+              <li>Your custom templates are saved in this browser.</li>
+            </ol>
+            <p class="note">
+              Premade ranges are intentionally omitted. Add them in
+              <code>script.js</code>.
+            </p>
+          </section>
+        </aside>
+      </div>
     </main>
 
+    <main id="quizTab" class="tab-content">
+      <section class="center-panel card">
+        <h2>Range Quiz</h2>
+        <p>Test whether a random hand belongs to the currently loaded range.</p>
+        <div class="quiz-controls">
+          <button id="quizStart">Start Quiz</button
+          ><button id="quizNext">Next Hand</button>
+        </div>
+        <div class="quiz-hand">
+          <span>Hand:</span><strong id="quizHand">—</strong>
+        </div>
+        <div class="quiz-answers">
+          <button id="quizInRange">In Range</button
+          ><button id="quizNotInRange">Not In Range</button>
+        </div>
+        <div id="quizResult" class="result-box"></div>
+        <div class="quiz-stats">
+          <div>Questions<strong id="quizCount">0</strong></div>
+          <div>Correct<strong id="quizCorrect">0</strong></div>
+          <div>Accuracy<strong id="quizAccuracy">0.0%</strong></div>
+        </div>
+      </section>
+    </main>
+
+    <main id="trainerTab" class="tab-content">
+      <div class="trainer-layout">
+        <section class="trainer-main">
+          <div class="card trainer-header">
+            <div>
+              <span class="eyebrow">6-MAX CASH • PREFLOP</span>
+              <h2>Hand Trainer</h2>
+              <p>Hard-coded decision-tree training. No solver is required.</p>
+            </div>
+            <div class="trainer-actions">
+              <button id="trainerStart" class="primary">Start Session</button
+              ><button id="trainerNext">Next Spot</button
+              ><button id="trainerReset" class="danger">Reset Stats</button>
+            </div>
+          </div>
+          <div class="card spot-card">
+            <div class="spot-meta">
+              <span id="trainerSpotGame" class="pill">6-MAX CASH</span
+              ><span id="trainerSpotStack" class="pill">100 BB</span
+              ><span id="trainerSpotDifficulty" class="pill">Medium</span>
+            </div>
+            <div class="spot-title-row">
+              <div>
+                <div id="trainerHeroPosition" class="position-label">BTN</div>
+                <h2 id="trainerSituation">Ready</h2>
+              </div>
+              <div id="trainerHand" class="big-hand">—</div>
+            </div>
+            <div class="action-history">
+              <h3>Action History</h3>
+              <div id="trainerActionHistory" class="action-line">
+                Start a session to receive a spot.
+              </div>
+            </div>
+            <div class="decision-box">
+              <div class="decision-heading">
+                <div>
+                  <h3>Your Decision</h3>
+                  <p id="trainerDecisionPrompt">Choose an action.</p>
+                </div>
+                <div id="trainerSizing" class="size-display"></div>
+              </div>
+              <div id="trainerActionButtons" class="action-buttons"></div>
+            </div>
+            <div id="trainerResult" class="trainer-result hidden"></div>
+          </div>
+          <div class="card trainer-solution hidden" id="trainerSolution">
+            <div class="solution-header">
+              <h3>Hard-Coded Solution</h3>
+              <span id="trainerSolutionScore" class="score-badge">—</span>
+            </div>
+            <div id="trainerFrequencyBars"></div>
+            <div id="trainerExplanation" class="explanation"></div>
+          </div>
+        </section>
+        <aside class="trainer-sidebar">
+          <section class="card">
+            <h3>Training Filters</h3>
+            <label
+              >Format<select id="trainerGameType">
+                <option value="6MAX_CASH">6-MAX CASH</option>
+              </select></label
+            >
+            <label
+              >Effective Stack<select id="trainerStack">
+                <option>20</option>
+                <option>40</option>
+                <option>60</option>
+                <option selected>100</option>
+                <option>150</option>
+                <option>200</option>
+              </select></label
+            >
+            <label
+              >Position<select id="trainerPosition">
+                <option>ANY</option>
+                <option>UTG</option>
+                <option>HJ</option>
+                <option>CO</option>
+                <option>BTN</option>
+                <option>SB</option>
+                <option>BB</option>
+              </select></label
+            >
+            <label
+              >Situation<select id="trainerSituation">
+                <option>ANY</option>
+                <option value="RFI">Raise First In</option>
+                <option value="VS_OPEN">Facing Open</option>
+                <option value="VS_3BET">Facing 3-Bet</option>
+                <option value="VS_4BET">Facing 4-Bet</option>
+              </select></label
+            >
+            <label
+              >Mode<select id="trainerMode">
+                <option value="DECISION">Decision Trainer</option>
+                <option value="RANGE">Range Trainer</option>
+                <option value="TREE">Decision Tree</option>
+              </select></label
+            >
+          </section>
+          <section class="card">
+            <h3>Session Stats</h3>
+            <div class="stat-grid">
+              <div>
+                <span>Attempts</span><strong id="trainerAttempts">0</strong>
+              </div>
+              <div>
+                <span>Best Action</span><strong id="trainerBest">0</strong>
+              </div>
+              <div>
+                <span>Match</span><strong id="trainerAccuracy">0.0%</strong>
+              </div>
+              <div>
+                <span>Avg Score</span><strong id="trainerAvgScore">0.0%</strong>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <h3>Preflop Bet Rules</h3>
+            <ul class="rule-list">
+              <li>No open: Raise <strong>2.5 BB</strong>.</li>
+              <li>Facing open: Raise <strong>8 BB</strong>.</li>
+              <li>Facing open from SB: Raise <strong>11 BB</strong>.</li>
+              <li>Facing 3-bet: 4-bet <strong>21.5 BB</strong>.</li>
+              <li>Facing 3-bet from SB: 4-bet <strong>23 BB</strong>.</li>
+              <li>All-In is available on raise decisions.</li>
+              <li>Call only appears when there is a bet to call.</li>
+            </ul>
+          </section>
+          <section class="card">
+            <h3>How Solutions Work</h3>
+            <p class="note">
+              A non-zero action frequency is strategically acceptable. The score
+              equals the hard-coded frequency of the action you selected, so
+              mixed strategies are handled correctly.
+            </p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <main id="reviewTab" class="tab-content">
+      <div class="review-layout">
+        <section class="card">
+          <div class="review-toolbar">
+            <div>
+              <span class="eyebrow">MANUAL REPLAY</span>
+              <h2>Hand Review</h2>
+              <p>Record a hand street by street.</p>
+            </div>
+            <div>
+              <label
+                >Seats<select id="seatCountSelect">
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option selected>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                </select></label
+              ><button id="btnResetHand">Reset Hand</button>
+            </div>
+          </div>
+          <div id="reviewTable" class="review-table"></div>
+          <div class="review-controls">
+            <label
+              >Selected Player<select id="reviewPlayerSelect"></select></label
+            ><label
+              >Action<select id="reviewActionSelect">
+                <option>Fold</option>
+                <option>Check</option>
+                <option>Call</option>
+                <option>Raise</option>
+                <option>All-In</option>
+              </select></label
+            ><label
+              >Amount (BB)<input
+                id="reviewAmount"
+                type="number"
+                step="0.5" /></label
+            ><button id="reviewAddAction">Add Action</button>
+          </div>
+          <div id="reviewHistory" class="review-history"></div>
+        </section>
+        <aside class="card">
+          <h3>Board</h3>
+          <div class="board-editor">
+            <label>Flop 1<select id="flop1"></select></label
+            ><label>Flop 2<select id="flop2"></select></label
+            ><label>Flop 3<select id="flop3"></select></label
+            ><label>Turn<select id="turn"></select></label
+            ><label>River<select id="river"></select></label>
+          </div>
+          <button id="btnDealFlop">Deal Flop</button
+          ><button id="btnDealTurn">Deal Turn</button
+          ><button id="btnDealRiver">Deal River</button>
+        </aside>
+      </div>
+    </main>
     <div id="toast" class="toast"></div>
     <script src="script.js"></script>
   </body>
